@@ -120,19 +120,65 @@ export class Model {
   }
 
   sendOffer(studentId, gigId) {
-    alert(`Offer sent to student ${studentId} for gig ${gigId}`);
+    const gig = this.state.companyGigs.find(g => g.id === parseInt(gigId));
+    const student = this.state.students.find(s => s.id === parseInt(studentId));
+    
+    if (gig && student) {
+      gig.status = 'sent';
+      gig.sentTo = student.name;
+      
+      // Avoid duplicates, then add to the student's offers
+      const offerExists = this.state.studentGigs.offers.some(o => o.id === gig.id);
+      if (!offerExists) {
+        this.state.studentGigs.offers.push({
+          ...gig,
+          company: 'Your Company' // Mocked company name
+        });
+      }
+      
+      alert(`Offer for "${gig.title}" sent to ${student.name}!`);
+      this.notify();
+    }
+  }
+
+  saveGig(data) {
+    data.id = Date.now();
+    data.status = 'ready';
+    this.state.companyGigs.push(data);
+    this.state.tab = 'myGigs';
+    this.notify();
   }
 
   saveProfile(data) {
     data.id = Date.now();
     data.title = data.title || "New Profile";
     this.state.studentProfiles.push(data);
+
+    // Map the form data to the format expected by the Company view
+    const newSearchableStudent = {
+      id: data.id,
+      name: data.fullName || 'Anonymous Student',
+      title: data.title,
+      availability: data.availability || 'Not specified',
+      bio: data.about || 'No bio provided.',
+      aboutMe: data.about || '',
+      workExperience: 'N/A', // Not in the current form
+      additionalInfo: data.additionalInfo || '',
+      education: data.education || '',
+      languages: data.languages ? data.languages.split(',').map(s => s.trim()) : [],
+      skills: data.skills ? data.skills.split(',').map(s => s.trim()) : [],
+      minPay: data.minPay ? `${data.minPay} SEK/h` : 'N/A',
+      photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.fullName || 'Student')}&background=random&color=fff`
+    };
+    
+    this.state.students.push(newSearchableStudent);
     this.state.tab = 'profiles';
     this.notify();
   }
 
   deleteProfile(id) {
     this.state.studentProfiles = this.state.studentProfiles.filter(p => p.id !== id);
+    this.state.students = this.state.students.filter(s => s.id !== id);
     this.notify();
   }
 

@@ -230,32 +230,32 @@ export class View {
     return `
       <section class="create-gig-form">
         <h3>${this.t(state, 'createGigBtn')}</h3>
-        <form class="student-form">
+        <form id="create-gig-form" class="student-form">
           <fieldset>
              <legend>Gig Basics</legend>
              <div class="form-grid">
-               <input type="text" placeholder="Gig Title" required>
-               <input type="text" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" required>
-               <input type="text" placeholder="${this.t(state, 'date')} (e.g. 2026-05-15)" required>
-               <input type="text" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" required>
+               <input type="text" name="title" placeholder="Gig Title" required>
+               <input type="text" name="salary" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" required>
+               <input type="text" name="date" placeholder="${this.t(state, 'date')} (e.g. 2026-05-15)" required>
+               <input type="text" name="duration" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" required>
              </div>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'fullDescription')}</legend>
-             <textarea rows="4" placeholder="Describe the job role and expectations..."></textarea>
+             <textarea name="description" rows="4" placeholder="Describe the job role and expectations..."></textarea>
           </fieldset>
           <fieldset>
              <legend>Requirements</legend>
              <div class="form-grid">
-               <input type="text" placeholder="${this.t(state, 'dresscode')}">
-               <input type="text" placeholder="${this.t(state, 'languages')}">
+               <input type="text" name="dresscode" placeholder="${this.t(state, 'dresscode')}">
+               <input type="text" name="language" placeholder="${this.t(state, 'languages')}">
              </div>
           </fieldset>
           <fieldset>
              <legend>Logistics</legend>
              <div class="form-grid">
-               <input type="text" placeholder="${this.t(state, 'contactInfo')}">
-               <input type="date" placeholder="${this.t(state, 'deadline')}">
+               <input type="text" name="contactInfo" placeholder="${this.t(state, 'contactInfo')}">
+               <input type="date" name="deadline" placeholder="${this.t(state, 'deadline')}">
              </div>
           </fieldset>
           <div style="display: flex; justify-content: flex-end; gap: 1rem;">
@@ -479,4 +479,3 @@ export class View {
     `;
   }
 }
-

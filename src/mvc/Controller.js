@@ -121,6 +121,16 @@ export class Controller {
       });
     });
 
+    const createGigForm = document.getElementById('create-gig-form');
+    if (createGigForm) {
+      createGigForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(createGigForm);
+        const data = Object.fromEntries(formData.entries());
+        this.model.saveGig(data);
+      });
+    }
+
     const studentForm = document.getElementById('student-profile-form');
     if (studentForm) {
       studentForm.addEventListener('submit', (e) => {
