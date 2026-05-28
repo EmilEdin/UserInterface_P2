@@ -255,12 +255,16 @@ export class View {
         <form id="create-gig-form" class="student-form">
           <fieldset>
              <legend>Gig Basics</legend>
-             <div class="form-grid">
+             <div class="form-grid" style="align-items: flex-end;">
                <input type="text" name="title" placeholder="Gig Title" value="${editGig?.title || ''}" required>
                <input type="text" name="salary" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" value="${editGig?.salary || ''}" required>
-               <div style="display: flex; gap: 0.5rem;">
-                  <input type="date" name="startDate" placeholder="Start Date" aria-label="Start Date" value="${editGig?.startDate || ''}" required>
-                  <input type="date" name="endDate" placeholder="End Date" aria-label="End Date" value="${editGig?.endDate || ''}" required>
+               <div>
+                  <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">Start Date</label>
+                  <input type="date" name="startDate" aria-label="Start Date" value="${editGig?.startDate || ''}" required>
+               </div>
+               <div>
+                  <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">End Date</label>
+                  <input type="date" name="endDate" aria-label="End Date" value="${editGig?.endDate || ''}" required>
                </div>
                <input type="text" name="duration" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" value="${editGig?.duration || ''}" required>
              </div>
@@ -278,11 +282,17 @@ export class View {
           </fieldset>
           <fieldset>
              <legend>Logistics</legend>
-             <div class="form-grid">
+             <div class="form-grid" style="align-items: flex-end;">
                <input type="text" name="contactInfo" placeholder="${this.t(state, 'contactInfo')}" value="${editGig?.contactInfo || ''}">
-               <input type="date" name="deadline" placeholder="${this.t(state, 'deadline')}" value="${editGig?.deadline || ''}">
+               <div>
+                  <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">Application Deadline</label>
+                  <input type="date" name="deadline" aria-label="Deadline" value="${editGig?.deadline || ''}">
+               </div>
                ${!editGig ? `
-                  <input type="number" name="copies" placeholder="Number of copies" min="1" max="10" value="1" title="How many copies of this gig to create">
+                  <div>
+                     <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">Number of Copies</label>
+                     <input type="number" name="copies" min="1" max="10" value="1" title="How many copies of this gig to create">
+                  </div>
                ` : ''}
              </div>
           </fieldset>
