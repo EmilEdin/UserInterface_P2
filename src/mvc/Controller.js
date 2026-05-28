@@ -80,6 +80,15 @@ export class Controller {
       });
     });
 
+    document.querySelectorAll('.delete-gig-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(e.currentTarget.dataset.id);
+        if(confirm("Are you sure you want to delete this gig?")) {
+           this.model.deleteGig(id);
+        }
+      });
+    });
+
     document.getElementById('create-new-profile-btn')?.addEventListener('click', () => {
       this.model.setTab('createProfile');
     });
@@ -104,15 +113,6 @@ export class Controller {
       });
     });
 
-    document.querySelectorAll('.select-profile-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.select-profile-btn').forEach(b => {
-           b.textContent = 'Select';
-        });
-        e.currentTarget.textContent = 'Selected ✓';
-      });
-    });
-
     document.querySelectorAll('.send-offer-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const id = parseInt(e.currentTarget.dataset.id);
@@ -134,6 +134,15 @@ export class Controller {
         this.model.declineOffer(id);
       });
     });
+
+    const filterForm = document.getElementById('company-filter-form');
+    if (filterForm) {
+      filterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(filterForm);
+        this.model.applyFilter(Object.fromEntries(formData.entries()));
+      });
+    }
 
     const createGigForm = document.getElementById('create-gig-form');
     if (createGigForm) {

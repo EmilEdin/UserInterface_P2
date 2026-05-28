@@ -73,50 +73,61 @@ export class View {
   }
 
   renderCompanySearch(state) {
+    const { industry, availability, education, minPay, languages, city } = state.filter;
+    
+    // Filter the students dynamically
+    const filteredStudents = state.students.filter(student => {
+      if (industry && student.title && !student.title.toLowerCase().includes(industry.toLowerCase())) return false;
+      if (availability && student.availability && !student.availability.toLowerCase().includes(availability.toLowerCase())) return false;
+      if (education && student.education && !student.education.toLowerCase().includes(education.toLowerCase())) return false;
+      if (minPay && parseInt(student.minPay) < parseInt(minPay)) return false;
+      if (city && student.city && !student.city.toLowerCase().includes(city.toLowerCase())) return false;
+      
+      if (languages && student.languages) {
+        const searchLangs = languages.split(',').map(l => l.trim().toLowerCase());
+        const studentLangs = student.languages.map(l => l.toLowerCase());
+        if (!searchLangs.some(l => studentLangs.includes(l))) return false;
+      }
+      return true;
+    });
+
     return `
-      <aside class="filters-sidebar">
+      <form id="company-filter-form" class="filters-sidebar">
         <h3>${this.t(state, 'filters')}</h3>
         <div class="filter-group">
           <label>${this.t(state, 'industry')}</label>
-          <select aria-label="${this.t(state, 'industry')}">
-            <option value="">All Industries</option>
-            <option value="Administration">Administration</option>
-            <option value="Construction">Construction</option>
-            <option value="Education">Education</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Hospitality">Hospitality</option>
-            <option value="IT">IT</option>
-            <option value="Sales">Sales</option>
+          <select name="industry" aria-label="${this.t(state, 'industry')}">
+            <option value="" ${!industry ? 'selected' : ''}>All Industries</option>
+            <option value="Waiter" ${industry === 'Waiter' ? 'selected' : ''}>Hospitality/Waiter</option>
+            <option value="Bartender" ${industry === 'Bartender' ? 'selected' : ''}>Hospitality/Bartender</option>
           </select>
         </div>
         <div class="filter-group">
           <label>${this.t(state, 'availability')}</label>
-          <input type="text" placeholder="e.g. Weekends" aria-label="${this.t(state, 'availability')}">
+          <input type="text" name="availability" value="${availability || ''}" placeholder="e.g. Weekends" aria-label="${this.t(state, 'availability')}">
         </div>
         <div class="filter-group">
           <label>${this.t(state, 'education')}</label>
-          <input type="text" placeholder="e.g. University" aria-label="${this.t(state, 'education')}">
-        </div>
-        <div class="filter-group">
-          <label>${this.t(state, 'minRating')}</label>
-          <input type="number" min="0" max="10" placeholder="0-10" aria-label="${this.t(state, 'minRating')}">
+          <input type="text" name="education" value="${education || ''}" placeholder="e.g. University" aria-label="${this.t(state, 'education')}">
         </div>
         <div class="filter-group">
           <label>${this.t(state, 'minPay')}</label>
-          <input type="number" placeholder="100" aria-label="${this.t(state, 'minPay')}">
+          <input type="number" name="minPay" value="${minPay || ''}" placeholder="100" aria-label="${this.t(state, 'minPay')}">
         </div>
         <div class="filter-group">
           <label>${this.t(state, 'languages')}</label>
-          <input type="text" placeholder="e.g. EN, SV" aria-label="${this.t(state, 'languages')}">
+          <input type="text" name="languages" value="${languages || ''}" placeholder="e.g. EN, SV" aria-label="${this.t(state, 'languages')}">
         </div>
         <div class="filter-group">
           <label>${this.t(state, 'city')}</label>
-          <input type="text" placeholder="e.g. Stockholm" aria-label="${this.t(state, 'city')}">
+          <input type="text" name="city" value="${city || ''}" placeholder="e.g. Stockholm" aria-label="${this.t(state, 'city')}">
         </div>
-        <button class="btn primary apply-filters-btn">${this.t(state, 'apply')}</button>
-      </aside>
+        <button type="submit" class="btn primary apply-filters-btn">${this.t(state, 'apply')}</button>
+      </form>
       <div class="main-panel">
-        ${state.students.map((student) => this.renderStudentCard(state, student)).join('')}
+        ${filteredStudents.length > 0 
+          ? filteredStudents.map((student) => this.renderStudentCard(state, student)).join('') 
+          : '<p class="empty-list">No candidates found matching your filters.</p>'}
       </div>
     `;
   }
@@ -129,7 +140,7 @@ export class View {
           <img src="${student.photo}" alt="${student.name}" class="profile-photo"/>
           <div class="profile-info">
             <h3>${student.name}</h3>
-            <p><strong>${student.title}</strong> | ${student.availability} | <strong>${this.t(state, 'minPay')}:</strong> ${student.minPay || 'N/A'}</p>
+            <p><strong>${student.title}</strong> | ${student.availability} ${student.city ? `| ${student.city}` : ''} | <strong>${this.t(state, 'minPay')}:</strong> ${student.minPay || 'N/A'}</p>
             <p>${student.bio}</p>
           </div>
           <button class="expand-profile-btn" data-id="${student.id}" aria-expanded="${!!isExpanded}" aria-label="${isExpanded ? this.t(state, 'showLess') : this.t(state, 'showMore')}">
@@ -167,6 +178,7 @@ export class View {
   renderCompanyGigs(state) {
     const readyGigs = state.companyGigs.filter(g => g.status === 'ready');
     const sentGigs = state.companyGigs.filter(g => g.status === 'sent');
+    const ongoingGigs = state.companyGigs.filter(g => g.status === 'ongoing');
     
     return `
       <section class="gigs-panel" style="width: 100%; max-width: 900px; margin: 0 auto;">
@@ -188,6 +200,13 @@ export class View {
              ${sentGigs.length ? sentGigs.map(g => this.renderCompanyGigCard(state, g)).join('') : `<p class="empty-list">No sent gigs</p>`}
           </div>
         </div>
+
+        <div class="gigs-section" style="margin-top: 2rem;">
+          <h3>${this.t(state, 'ongoingGigs')}</h3>
+          <div class="gigs-list">
+             ${ongoingGigs.length ? ongoingGigs.map(g => this.renderCompanyGigCard(state, g)).join('') : `<p class="empty-list">No ongoing gigs</p>`}
+          </div>
+        </div>
       </section>
     `;
   }
@@ -199,11 +218,12 @@ export class View {
          <div class="gig-min">
            <div style="flex: 1;">
               <h4>${gig.title}</h4>
-              <p class="text-sm text-slate-500">${this.t(state, 'date')}: ${gig.date} | ${this.t(state, 'duration')}: ${gig.duration} | ${this.t(state, 'salary')}: ${gig.salary}</p>
+              <p class="text-sm text-slate-500">${this.t(state, 'date')}: ${gig.startDate} to ${gig.endDate} | ${this.t(state, 'duration')}: ${gig.duration} | ${this.t(state, 'salary')}: ${gig.salary}</p>
               ${gig.sentTo ? `<p class="text-sm text-slate-500 mt-1">Sent to: <strong>${gig.sentTo}</strong></p>` : ''}
            </div>
            <div style="display: flex; gap: 0.5rem; align-items: center;">
               ${gig.status === 'ready' ? `<button class="btn outline edit-gig-btn" data-id="${gig.id}">${this.t(state, 'edit')}</button>` : ''}
+              ${gig.status === 'ready' ? `<button class="btn outline delete-gig-btn" data-id="${gig.id}" style="color: #ef4444; border-color: #ef4444;">Delete</button>` : ''}
               <button class="expand-gig-btn" data-id="${gig.id}" aria-label="Expand">
                 ${isExpanded ? '▲' : '▼'}
               </button>
@@ -238,7 +258,10 @@ export class View {
              <div class="form-grid">
                <input type="text" name="title" placeholder="Gig Title" value="${editGig?.title || ''}" required>
                <input type="text" name="salary" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" value="${editGig?.salary || ''}" required>
-               <input type="text" name="date" placeholder="${this.t(state, 'date')} (e.g. 2026-05-15)" value="${editGig?.date || ''}" required>
+               <div style="display: flex; gap: 0.5rem;">
+                  <input type="date" name="startDate" placeholder="Start Date" aria-label="Start Date" value="${editGig?.startDate || ''}" required>
+                  <input type="date" name="endDate" placeholder="End Date" aria-label="End Date" value="${editGig?.endDate || ''}" required>
+               </div>
                <input type="text" name="duration" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" value="${editGig?.duration || ''}" required>
              </div>
           </fieldset>
@@ -258,6 +281,9 @@ export class View {
              <div class="form-grid">
                <input type="text" name="contactInfo" placeholder="${this.t(state, 'contactInfo')}" value="${editGig?.contactInfo || ''}">
                <input type="date" name="deadline" placeholder="${this.t(state, 'deadline')}" value="${editGig?.deadline || ''}">
+               ${!editGig ? `
+                  <input type="number" name="copies" placeholder="Number of copies" min="1" max="10" value="1" title="How many copies of this gig to create">
+               ` : ''}
              </div>
           </fieldset>
           <div style="display: flex; justify-content: flex-end; gap: 1rem;">
@@ -317,7 +343,6 @@ export class View {
                    </div>
                    <div style="display: flex; gap: 0.5rem;">
                      <button class="btn outline edit-profile-btn" data-id="${p.id}">Edit</button>
-                     <button class="btn outline select-profile-btn" data-id="${p.id}" style="color: var(--primary); border-color: var(--primary);">Select</button>
                      <button class="btn outline delete-profile-btn" data-id="${p.id}" style="color: #ef4444; border-color: #ef4444;">Delete</button>
                    </div>
                 </div>
@@ -352,7 +377,10 @@ export class View {
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'housingInfo')}</legend>
-             <input type="text" name="address" placeholder="Address" aria-label="Address" value="${editProfile?.address || ''}">
+             <div class="form-grid">
+               <input type="text" name="address" placeholder="Address" aria-label="Address" value="${editProfile?.address || ''}">
+               <input type="text" name="city" placeholder="City" aria-label="City" value="${editProfile?.city || ''}">
+             </div>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'bankInfo')}</legend>
@@ -453,7 +481,7 @@ export class View {
              <div style="flex: 1;">
                <h4>${gig.title}</h4>
                <p class="text-sm" style="font-weight: 600; color: var(--primary); margin-bottom: 0.25rem;">${gig.company}</p>
-               <p class="text-sm text-slate-500">${this.t(state, 'date')}: ${gig.date} | ${this.t(state, 'salary')}: ${gig.salary} | ${this.t(state, 'duration')}: ${gig.duration}</p>
+               <p class="text-sm text-slate-500">${this.t(state, 'date')}: ${gig.startDate} to ${gig.endDate} | ${this.t(state, 'salary')}: ${gig.salary} | ${this.t(state, 'duration')}: ${gig.duration}</p>
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
                ${isOffer ? `

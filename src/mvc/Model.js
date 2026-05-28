@@ -12,7 +12,6 @@ export class Model {
       filter: {
         industry: '',
         availability: '',
-        minRating: 0,
         minPay: 0,
         city: '',
         languages: ''
@@ -31,6 +30,7 @@ export class Model {
           languages: ['English', 'Swedish'],
           skills: ['Service', 'Speed', 'Stress resistance', 'Flexibility'],
           minPay: '150 SEK/h',
+          city: 'Stockholm',
           photo: 'https://ui-avatars.com/api/?name=Anna+Smith&background=0D8ABC&color=fff'
         },
         {
@@ -46,6 +46,7 @@ export class Model {
           languages: ['English', 'Spanish'],
           skills: ['Mixing', 'Charisma', 'Creativity', 'Service'],
           minPay: '180 SEK/h',
+          city: 'Gothenburg',
           photo: 'https://ui-avatars.com/api/?name=John+Doe&background=10B981&color=fff'
         }
       ],
@@ -53,25 +54,25 @@ export class Model {
         { id: 1, title: 'Waiter Profile', fullName: 'Emil Edin', email: 'emil@example.com', about: 'Good at serving.', availability: 'Weekends' }
       ],
       companyGigs: [
-        { id: 1, title: 'Waiter for weekend', status: 'ready', date: '2026-05-15', duration: '2 days', salary: '$20/h', description: 'Weekend waiter needed for busy shift. Black and white uniform.', dresscode: 'Black and white formal', language: 'Swedish/English', contactInfo: 'hr@restaurant.com' },
-        { id: 2, title: 'Barista needed', status: 'ready', date: '2026-05-16', duration: '1 day', salary: '$18/h', description: 'Experienced barista for morning rush.', dresscode: 'Casual black', language: 'Swedish/English', contactInfo: 'cafe@coffee.com' },
-        { id: 3, title: 'Bartender for corporate event', status: 'sent', sentTo: 'John Doe', date: '2026-05-20', duration: '5 hours', salary: '$25/h', description: 'Mixing drinks for a corporate party. High pace.', dresscode: 'Smart casual', language: 'English', contactInfo: 'events@corp.com' }
+        { id: 1, title: 'Waiter for weekend', status: 'ready', startDate: '2026-05-15', endDate: '2026-05-16', duration: '2 days', salary: '$20/h', description: 'Weekend waiter needed for busy shift. Black and white uniform.', dresscode: 'Black and white formal', language: 'Swedish/English', contactInfo: 'hr@restaurant.com' },
+        { id: 2, title: 'Barista needed', status: 'ready', startDate: '2026-05-16', endDate: '2026-05-16', duration: '1 day', salary: '$18/h', description: 'Experienced barista for morning rush.', dresscode: 'Casual black', language: 'Swedish/English', contactInfo: 'cafe@coffee.com' },
+        { id: 3, title: 'Bartender for corporate event', status: 'sent', sentTo: 'John Doe', startDate: '2026-05-20', endDate: '2026-05-20', duration: '5 hours', salary: '$25/h', description: 'Mixing drinks for a corporate party. High pace.', dresscode: 'Smart casual', language: 'English', contactInfo: 'events@corp.com' }
       ],
       historyGigs: [
-        { id: 4, title: 'Event Staff', status: 'finished', date: '2026-04-10', duration: '3 days', salary: '$15/h', info: 'Successfully completed, rating 5/5', description: 'General event setup and takedown.', dresscode: 'Provided T-shirt', language: 'Swedish/English', contactInfo: 'staffing@events.com' }
+        { id: 4, title: 'Event Staff', status: 'finished', startDate: '2026-04-10', endDate: '2026-04-12', duration: '3 days', salary: '$15/h', info: 'Successfully completed, rating 5/5', description: 'General event setup and takedown.', dresscode: 'Provided T-shirt', language: 'Swedish/English', contactInfo: 'staffing@events.com' }
       ],
       studentGigs: {
         offers: [
-          { id: 10, title: 'Waiter at Grand Hotel', company: 'The Grand Hotel', date: '2026-05-15', description: 'Wait tables for a prestigious wedding event. You will be serving a 3-course meal to 100+ guests. High standards of service expected.', dresscode: 'Black suit, white shirt, black tie', language: 'Swedish / English', contactInfo: 'hr@grandhotel.com', deadline: '2026-05-10', duration: '1 evening', salary: '250 SEK/h' }
+          { id: 10, title: 'Waiter at Grand Hotel', company: 'The Grand Hotel', startDate: '2026-05-15', endDate: '2026-05-15', description: 'Wait tables for a prestigious wedding event. You will be serving a 3-course meal to 100+ guests. High standards of service expected.', dresscode: 'Black suit, white shirt, black tie', language: 'Swedish / English', contactInfo: 'hr@grandhotel.com', deadline: '2026-05-10', duration: '1 evening', salary: '250 SEK/h' }
         ],
         ongoing: [
-          { id: 11, title: 'Barista', company: 'Cafe Nero', date: '2026-05-16', description: 'Morning shift barista for the busy downtown location. Handling espresso machines and serving pastries.', dresscode: 'Black shirt, apron provided', language: 'Swedish', contactInfo: 'manager@cafenero.com', duration: 'All weekend', salary: '160 SEK/h' }
+          { id: 11, title: 'Barista', company: 'Cafe Nero', startDate: '2026-05-16', endDate: '2026-05-17', description: 'Morning shift barista for the busy downtown location. Handling espresso machines and serving pastries.', dresscode: 'Black shirt, apron provided', language: 'Swedish', contactInfo: 'manager@cafenero.com', duration: 'All weekend', salary: '160 SEK/h' }
         ],
         finished: [
-          { id: 12, title: 'Bartender', company: 'Night Club X', date: '2026-04-12', description: 'Mix drinks in a high-volume night club environment.', dresscode: 'Casual black', language: 'English', contactInfo: 'boss@clubx.com', duration: 'Friday night', salary: '200 SEK/h' }
+          { id: 12, title: 'Bartender', company: 'Night Club X', startDate: '2026-04-12', endDate: '2026-04-13', description: 'Mix drinks in a high-volume night club environment.', dresscode: 'Casual black', language: 'English', contactInfo: 'boss@clubx.com', duration: 'Friday night', salary: '200 SEK/h' }
         ],
         declined: [
-          { id: 13, title: 'Dishwasher', company: 'Restaurant Y', date: '2026-04-15', description: 'Washing dishes and kitchen prep.', dresscode: 'Provided', language: 'Any', contactInfo: 'kitchen@resty.com', duration: '4 hours', salary: '150 SEK/h' }
+          { id: 13, title: 'Dishwasher', company: 'Restaurant Y', startDate: '2026-04-15', endDate: '2026-04-15', description: 'Washing dishes and kitchen prep.', dresscode: 'Provided', language: 'Any', contactInfo: 'kitchen@resty.com', duration: '4 hours', salary: '150 SEK/h' }
         ]
       }
     };
@@ -143,6 +144,11 @@ export class Model {
     }
   }
 
+  applyFilter(filters) {
+    this.state.filter = { ...this.state.filter, ...filters };
+    this.notify();
+  }
+
   editGig(id) {
     this.state.editingGigId = id;
     this.state.tab = 'createGig';
@@ -175,11 +181,21 @@ export class Model {
       }
       this.state.editingGigId = null;
     } else {
-      data.id = Date.now();
-      data.status = 'ready';
-      this.state.companyGigs.push(data);
+      // Extract and remove copies before saving
+      const copies = parseInt(data.copies, 10) || 1;
+      delete data.copies;
+      
+      for (let i = 0; i < copies; i++) {
+        const gigCopy = { ...data, id: Date.now() + i, status: 'ready' };
+        this.state.companyGigs.push(gigCopy);
+      }
     }
     this.state.tab = 'myGigs';
+    this.notify();
+  }
+
+  deleteGig(id) {
+    this.state.companyGigs = this.state.companyGigs.filter(g => g.id !== id);
     this.notify();
   }
 
@@ -189,6 +205,7 @@ export class Model {
       name: data.fullName || 'Anonymous Student',
       title: data.title,
       availability: data.availability || 'Not specified',
+      city: data.city || 'Not specified',
       bio: data.about || 'No bio provided.',
       aboutMe: data.about || '',
       workExperience: 'N/A', // Not in the current form
@@ -234,6 +251,12 @@ export class Model {
     if (gigIndex > -1) {
       const gig = this.state.studentGigs.offers.splice(gigIndex, 1)[0];
       this.state.studentGigs.ongoing.push(gig);
+      
+      // Also move the original company gig to 'ongoing'
+      const companyGig = this.state.companyGigs.find(g => g.id === gigId);
+      if (companyGig) {
+        companyGig.status = 'ongoing';
+      }
       this.notify();
     }
   }
