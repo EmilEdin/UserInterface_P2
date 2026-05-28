@@ -7,6 +7,8 @@ export class Model {
       tab: 'search', // 'search', 'create', 'history', 'profiles', 'createProfile', 'myGigs'
       expandedProfiles: {},
       expandedGigs: {},
+      editingGigId: null,
+      editingProfileId: null,
       filter: {
         industry: '',
         availability: '',
@@ -141,22 +143,49 @@ export class Model {
     }
   }
 
+  editGig(id) {
+    this.state.editingGigId = id;
+    this.state.tab = 'createGig';
+    this.notify();
+  }
+
+  cancelEditGig() {
+    this.state.editingGigId = null;
+    this.state.tab = 'myGigs';
+    this.notify();
+  }
+
+  editProfile(id) {
+    this.state.editingProfileId = id;
+    this.state.tab = 'createProfile';
+    this.notify();
+  }
+
+  cancelEditProfile() {
+    this.state.editingProfileId = null;
+    this.state.tab = 'profiles';
+    this.notify();
+  }
+
   saveGig(data) {
-    data.id = Date.now();
-    data.status = 'ready';
-    this.state.companyGigs.push(data);
+    if (this.state.editingGigId) {
+      const index = this.state.companyGigs.findIndex(g => g.id === this.state.editingGigId);
+      if (index > -1) {
+        this.state.companyGigs[index] = { ...this.state.companyGigs[index], ...data };
+      }
+      this.state.editingGigId = null;
+    } else {
+      data.id = Date.now();
+      data.status = 'ready';
+      this.state.companyGigs.push(data);
+    }
     this.state.tab = 'myGigs';
     this.notify();
   }
 
   saveProfile(data) {
-    data.id = Date.now();
-    data.title = data.title || "New Profile";
-    this.state.studentProfiles.push(data);
-
     // Map the form data to the format expected by the Company view
     const newSearchableStudent = {
-      id: data.id,
       name: data.fullName || 'Anonymous Student',
       title: data.title,
       availability: data.availability || 'Not specified',
@@ -171,7 +200,25 @@ export class Model {
       photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.fullName || 'Student')}&background=random&color=fff`
     };
     
-    this.state.students.push(newSearchableStudent);
+    if (this.state.editingProfileId) {
+      data.id = this.state.editingProfileId;
+      const pIndex = this.state.studentProfiles.findIndex(p => p.id === this.state.editingProfileId);
+      if (pIndex > -1) this.state.studentProfiles[pIndex] = { ...this.state.studentProfiles[pIndex], ...data };
+
+      const sIndex = this.state.students.findIndex(s => s.id === this.state.editingProfileId);
+      if (sIndex > -1) {
+        newSearchableStudent.id = this.state.editingProfileId;
+        this.state.students[sIndex] = { ...this.state.students[sIndex], ...newSearchableStudent };
+      }
+      this.state.editingProfileId = null;
+    } else {
+      data.id = Date.now();
+      data.title = data.title || "New Profile";
+      this.state.studentProfiles.push(data);
+      newSearchableStudent.id = data.id;
+      this.state.students.push(newSearchableStudent);
+    }
+    
     this.state.tab = 'profiles';
     this.notify();
   }

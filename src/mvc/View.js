@@ -203,7 +203,7 @@ export class View {
               ${gig.sentTo ? `<p class="text-sm text-slate-500 mt-1">Sent to: <strong>${gig.sentTo}</strong></p>` : ''}
            </div>
            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <button class="btn outline">${this.t(state, 'edit')}</button>
+              ${gig.status === 'ready' ? `<button class="btn outline edit-gig-btn" data-id="${gig.id}">${this.t(state, 'edit')}</button>` : ''}
               <button class="expand-gig-btn" data-id="${gig.id}" aria-label="Expand">
                 ${isExpanded ? '▲' : '▼'}
               </button>
@@ -227,35 +227,37 @@ export class View {
   }
 
   renderCreateGigForm(state) {
+    const editGig = state.editingGigId ? state.companyGigs.find(g => g.id === state.editingGigId) : null;
+    
     return `
       <section class="create-gig-form">
-        <h3>${this.t(state, 'createGigBtn')}</h3>
+        <h3>${editGig ? 'Edit Gig' : this.t(state, 'createGigBtn')}</h3>
         <form id="create-gig-form" class="student-form">
           <fieldset>
              <legend>Gig Basics</legend>
              <div class="form-grid">
-               <input type="text" name="title" placeholder="Gig Title" required>
-               <input type="text" name="salary" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" required>
-               <input type="text" name="date" placeholder="${this.t(state, 'date')} (e.g. 2026-05-15)" required>
-               <input type="text" name="duration" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" required>
+               <input type="text" name="title" placeholder="Gig Title" value="${editGig?.title || ''}" required>
+               <input type="text" name="salary" placeholder="${this.t(state, 'salary')} (e.g. 150 SEK/h)" value="${editGig?.salary || ''}" required>
+               <input type="text" name="date" placeholder="${this.t(state, 'date')} (e.g. 2026-05-15)" value="${editGig?.date || ''}" required>
+               <input type="text" name="duration" placeholder="${this.t(state, 'duration')} (e.g. 1 evening)" value="${editGig?.duration || ''}" required>
              </div>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'fullDescription')}</legend>
-             <textarea name="description" rows="4" placeholder="Describe the job role and expectations..."></textarea>
+             <textarea name="description" rows="4" placeholder="Describe the job role and expectations...">${editGig?.description || ''}</textarea>
           </fieldset>
           <fieldset>
              <legend>Requirements</legend>
              <div class="form-grid">
-               <input type="text" name="dresscode" placeholder="${this.t(state, 'dresscode')}">
-               <input type="text" name="language" placeholder="${this.t(state, 'languages')}">
+               <input type="text" name="dresscode" placeholder="${this.t(state, 'dresscode')}" value="${editGig?.dresscode || ''}">
+               <input type="text" name="language" placeholder="${this.t(state, 'languages')}" value="${editGig?.language || ''}">
              </div>
           </fieldset>
           <fieldset>
              <legend>Logistics</legend>
              <div class="form-grid">
-               <input type="text" name="contactInfo" placeholder="${this.t(state, 'contactInfo')}">
-               <input type="date" name="deadline" placeholder="${this.t(state, 'deadline')}">
+               <input type="text" name="contactInfo" placeholder="${this.t(state, 'contactInfo')}" value="${editGig?.contactInfo || ''}">
+               <input type="date" name="deadline" placeholder="${this.t(state, 'deadline')}" value="${editGig?.deadline || ''}">
              </div>
           </fieldset>
           <div style="display: flex; justify-content: flex-end; gap: 1rem;">
@@ -326,20 +328,22 @@ export class View {
   }
 
   renderStudentForm(state) {
+    const editProfile = state.editingProfileId ? state.studentProfiles.find(p => p.id === state.editingProfileId) : null;
+    
     return `
       <section class="create-gig-form">
-        <h3>Create Profile</h3>
+        <h3>${editProfile ? 'Edit Profile' : 'Create Profile'}</h3>
         <form id="student-profile-form" class="student-form">
           <fieldset>
              <legend>Profile Settings</legend>
-             <input type="text" name="title" placeholder="Profile Title (e.g. Waiter Profile)" aria-label="Profile Title" required>
+             <input type="text" name="title" placeholder="Profile Title (e.g. Waiter Profile)" aria-label="Profile Title" value="${editProfile?.title || ''}" required>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'personalInfo')}</legend>
              <div class="form-grid">
-               <input type="text" name="fullName" placeholder="Full Name" aria-label="Full Name" required>
-               <input type="email" name="email" placeholder="Email" aria-label="Email" required>
-               <input type="tel" name="phone" placeholder="Phone" aria-label="Phone">
+               <input type="text" name="fullName" placeholder="Full Name" aria-label="Full Name" value="${editProfile?.fullName || ''}" required>
+               <input type="email" name="email" placeholder="Email" aria-label="Email" value="${editProfile?.email || ''}" required>
+               <input type="tel" name="phone" placeholder="Phone" aria-label="Phone" value="${editProfile?.phone || ''}">
              </div>
              <div style="margin-top: 1rem;">
                <label style="display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-muted);">${this.t(state, 'profilePicture')}</label>
@@ -348,37 +352,37 @@ export class View {
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'housingInfo')}</legend>
-             <input type="text" name="address" placeholder="Address" aria-label="Address">
+             <input type="text" name="address" placeholder="Address" aria-label="Address" value="${editProfile?.address || ''}">
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'bankInfo')}</legend>
-             <input type="text" name="bankAccount" placeholder="Bank Account Number" aria-label="Bank Account Number">
+             <input type="text" name="bankAccount" placeholder="Bank Account Number" aria-label="Bank Account Number" value="${editProfile?.bankAccount || ''}">
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'aboutMe')}</legend>
-             <textarea name="about" rows="3" placeholder="Short bio..." aria-label="Bio"></textarea>
+             <textarea name="about" rows="3" placeholder="Short bio..." aria-label="Bio">${editProfile?.about || ''}</textarea>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'education')}</legend>
-             <input type="text" name="education" placeholder="University/School" aria-label="Education">
+             <input type="text" name="education" placeholder="University/School" aria-label="Education" value="${editProfile?.education || ''}">
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'skills')} & ${this.t(state, 'languages')}</legend>
              <div class="form-grid">
-               <input type="text" name="skills" placeholder="Skills (comma separated)" aria-label="Skills">
-               <input type="text" name="languages" placeholder="Languages (comma separated)" aria-label="Languages">
+               <input type="text" name="skills" placeholder="Skills (comma separated)" aria-label="Skills" value="${editProfile?.skills || ''}">
+               <input type="text" name="languages" placeholder="Languages (comma separated)" aria-label="Languages" value="${editProfile?.languages || ''}">
              </div>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'availability')} & ${this.t(state, 'minPay')}</legend>
              <div class="form-grid">
-               <input type="text" name="availability" placeholder="e.g. Weekends" aria-label="Availability">
-               <input type="number" name="minPay" placeholder="Hourly Pay (Min)" aria-label="Minimum hourly pay">
+               <input type="text" name="availability" placeholder="e.g. Weekends" aria-label="Availability" value="${editProfile?.availability || ''}">
+               <input type="number" name="minPay" placeholder="Hourly Pay (Min)" aria-label="Minimum hourly pay" value="${editProfile?.minPay || ''}">
              </div>
           </fieldset>
           <fieldset>
              <legend>${this.t(state, 'additionalInfo')}</legend>
-             <textarea name="additionalInfo" rows="2" placeholder="Any extra info..." aria-label="Additional Info"></textarea>
+             <textarea name="additionalInfo" rows="2" placeholder="Any extra info..." aria-label="Additional Info">${editProfile?.additionalInfo || ''}</textarea>
           </fieldset>
           <fieldset>
              <legend>CV</legend>

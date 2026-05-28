@@ -70,7 +70,14 @@ export class Controller {
     });
 
     document.getElementById('cancel-create-gig')?.addEventListener('click', () => {
-      this.model.setTab('myGigs');
+      this.model.cancelEditGig();
+    });
+
+    document.querySelectorAll('.edit-gig-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(e.currentTarget.dataset.id);
+        this.model.editGig(id);
+      });
     });
 
     document.getElementById('create-new-profile-btn')?.addEventListener('click', () => {
@@ -78,7 +85,14 @@ export class Controller {
     });
 
     document.getElementById('cancel-create-profile')?.addEventListener('click', () => {
-      this.model.setTab('profiles');
+      this.model.cancelEditProfile();
+    });
+
+    document.querySelectorAll('.edit-profile-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = parseInt(e.currentTarget.dataset.id);
+        this.model.editProfile(id);
+      });
     });
 
     document.querySelectorAll('.delete-profile-btn').forEach(btn => {
