@@ -1,14 +1,32 @@
 import { translations } from '../i18n.js';
 
+/**
+ * The View class handles the presentation layer of the application.
+ * It is purely reactive and generates dynamic HTML based on the state passed to it.
+ */
 export class View {
+  /**
+   * Initializes the View and mounts it to the root element.
+   */
   constructor() {
     this.app = document.getElementById('root');
   }
 
+  /**
+   * Helper function for Internationalization (i18n).
+   * Retrieves translated strings based on the current state language.
+   * @param {Object} state - The current application state.
+   * @param {string} key - The dictionary key for the requested text.
+   * @returns {string} The translated string.
+   */
   t(state, key) {
     return translations[state.lang]?.[key] || key;
   }
 
+  /**
+   * Main rendering function. Determines which major UI view to draw based on state.
+   * @param {Object} state - The current application state.
+   */
   render(state) {
     if (!this.app) return;
     if (state.page === 'home') {

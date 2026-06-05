@@ -2,7 +2,17 @@ import { Model } from './Model.js';
 import { View } from './View.js';
 import { initCanvasBg } from '../canvas-fx.js';
 
+/**
+ * The Controller class acts as the bridge connecting the Model and the View.
+ * It observes state changes to trigger UI re-renders, and it attaches DOM event 
+ * listeners that translate user interactions into Model updates.
+ */
 export class Controller {
+  /**
+   * Initializes the controller, links MVC layers, and performs initial render.
+   * @param {Model} model - The application's data Model.
+   * @param {View} view - The application's UI View.
+   */
   constructor(model, view) {
     this.model = model;
     this.view = view;
@@ -11,6 +21,12 @@ export class Controller {
     this.update(this.model.state);
   }
 
+  /**
+   * Called automatically when the Model's state changes.
+   * Triggers a UI re-render and re-binds all event listeners, as Vanilla JS 
+   * innerHTML replacements destroy previous DOM event bindings.
+   * @param {Object} state - The newly updated application state.
+   */
   update(state) {
     this.view.render(state);
     this.bindEvents(state);
@@ -20,10 +36,13 @@ export class Controller {
     }
 
     if (state.page === 'dashboard' && state.userRole === 'company' && state.tab === 'search') {
-      // Logic for grid updates if needed
     }
   }
 
+  /**
+   * Binds user interactions (clicks, submits, changes) to Model actions.
+   * @param {Object} state - The current application state.
+   */
   bindEvents(state) {
     const langSelect = document.getElementById('lang-switch');
     if (langSelect) {

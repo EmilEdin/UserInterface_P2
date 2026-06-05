@@ -1,4 +1,12 @@
+/**
+ * The Model class acts as the single source of truth for the application.
+ * It holds all state (data, UI toggles, user roles) and implements the 
+ * Observer pattern to notify subscribers (the Controller) when state changes occur.
+ */
 export class Model {
+  /**
+   * Initializes the default application state and mock database arrays.
+   */
   constructor() {
     this.state = {
       lang: 'en',
@@ -51,7 +59,7 @@ export class Model {
         }
       ],
       studentProfiles: [
-        { id: 1, title: 'Waiter Profile', fullName: 'Emil Edin', email: 'emil@example.com', about: 'Good at serving.', availability: 'Weekends' }
+        { id: 1, title: 'Waiter Profile', fullName: 'Elon Tusk', email: 'elon@example.com', about: 'Good at serving.', availability: 'Weekends' }
       ],
       companyGigs: [
         { id: 1, title: 'Waiter for weekend', status: 'ready', startDate: '2026-05-15', endDate: '2026-05-16', duration: '2 days', salary: '$20/h', description: 'Weekend waiter needed for busy shift. Black and white uniform.', dresscode: 'Black and white formal', language: 'Swedish/English', contactInfo: 'hr@restaurant.com' },
@@ -79,19 +87,35 @@ export class Model {
     this.listeners = [];
   }
 
+  /**
+   * Registers a listener callback to be invoked upon any state changes.
+   * @param {Function} listener - The callback function
+   */
   subscribe(listener) {
     this.listeners.push(listener);
   }
 
+  /**
+   * Broadcasts a copy of the current state to all subscribed listeners.
+   */
   notify() {
     this.listeners.forEach(l => l({ ...this.state }));
   }
 
+  /**
+   * Updates the active UI language.
+   * @param {string} l - Language code (e.g., 'en', 'sv').
+   */
   setLang(l) {
     this.state.lang = l;
     this.notify();
   }
 
+  /**
+   * Navigates to a different main page and updates the user role.
+   * @param {string} page - The target page ('home', 'dashboard').
+   * @param {string} [role] - The selected user role ('company', 'student').
+   */
   setPage(page, role) {
     this.state.page = page;
     if (role) this.state.userRole = role;
@@ -101,27 +125,47 @@ export class Model {
     this.notify();
   }
 
+  /**
+   * Switches the active tab inside the dashboard.
+   * @param {string} tab - The tab identifier (e.g., 'search', 'myGigs').
+   */
   setTab(tab) {
     this.state.tab = tab;
     this.notify();
   }
 
+  /**
+   * Toggles the visual expanded state of a student profile card.
+   * @param {number|string} id - The ID of the student profile.
+   */
   toggleProfileExpand(id) {
     this.state.expandedProfiles[id] = !this.state.expandedProfiles[id];
     this.notify();
   }
 
+  /**
+   * Toggles the visual expanded state of a gig card.
+   * @param {number|string} id - The ID of the gig.
+   */
   toggleGigExpand(id) {
     this.state.expandedGigs[id] = !this.state.expandedGigs[id];
     this.notify();
   }
 
+  /**
+   * Logs the current user out, clearing role state and returning to the home screen.
+   */
   logout() {
     this.state.page = 'home';
     this.state.userRole = null;
     this.notify();
   }
 
+  /**
+   * Sends a gig offer from a company to a specific student.
+   * @param {number|string} studentId - The ID of the student receiving the offer.
+   * @param {number|string} gigId - The ID of the gig being offered.
+   */
   sendOffer(studentId, gigId) {
     const gig = this.state.companyGigs.find(g => g.id === parseInt(gigId));
     const student = this.state.students.find(s => s.id === parseInt(studentId));
@@ -144,11 +188,19 @@ export class Model {
     }
   }
 
+  /**
+   * Applies new search filters to the company search dashboard.
+   * @param {Object} filters - Key-value pairs of filtering criteria.
+   */
   applyFilter(filters) {
     this.state.filter = { ...this.state.filter, ...filters };
     this.notify();
   }
 
+  /**
+   * Sets up the UI to edit an existing gig.
+   * @param {number|string} id - The ID of the gig to edit.
+   */
   editGig(id) {
     this.state.editingGigId = id;
     this.state.tab = 'createGig';
@@ -173,6 +225,10 @@ export class Model {
     this.notify();
   }
 
+  /**
+   * Saves a new gig or updates an existing gig being edited.
+   * @param {Object} data - Form data containing the gig details.
+   */
   saveGig(data) {
     if (this.state.editingGigId) {
       const index = this.state.companyGigs.findIndex(g => g.id === this.state.editingGigId);
@@ -194,11 +250,19 @@ export class Model {
     this.notify();
   }
 
+  /**
+   * Deletes a specific gig from the company's list.
+   * @param {number|string} id - The ID of the gig to delete.
+   */
   deleteGig(id) {
     this.state.companyGigs = this.state.companyGigs.filter(g => g.id !== id);
     this.notify();
   }
 
+  /**
+   * Saves a new student profile or updates an existing profile being edited.
+   * @param {Object} data - Form data containing the profile details.
+   */
   saveProfile(data) {
     // Map the form data to the format expected by the Company view
     const newSearchableStudent = {

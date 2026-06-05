@@ -1,3 +1,7 @@
+/**
+ * Internationalization (i18n) translation dictionary.
+ * Holds UI string translations for English (en) and Swedish (sv).
+ */
 export const translations = {
   en: {
     tired: "Tired looking for personnel all the time?",
